@@ -22,7 +22,7 @@ class WannaCryRestorer:
         litter_file_left_behind_by_wanna_cry = "README_FOR_DECRYPT.txt"
 
         # if prior run's results were found
-        if os.path.exists("encrypted_drive_dataset.json"):
+        if False and os.path.exists("encrypted_drive_dataset.json"):
             print("Prior run's 'encrypted_drive_dataset.json' is found. Using that instead of recreating it")
             with open("encrypted_drive_dataset.json") as json_file: 
                 encrypted_drive_dataset = json.load(json_file)
@@ -98,13 +98,16 @@ class WannaCryRestorer:
     def restore(self):
         # traverse encrypted drive and figure out what litter we can remove and
         # what files are encrypted
-        encrypted_drive_dataset = build_dataset_from_encrypted_drive(self.args.root_encrypted_dir)
+        encrypted_drive_dataset = self.build_dataset_from_encrypted_drive(self.args.root_encrypted_dir) 
 
         # travese the backup drive and figure out what backups we can use to
         # replace encrypted files
-        encrypted_filepath_to_backup_filepath = replace_encrypted_with_backup(self.args.root_backup_dir, encrypted_drive_dataset)
+        encrypted_filepath_to_backup_filepath = self.replace_encrypted_with_backup(
+            self.args.root_backup_dir, 
+            encrypted_drive_dataset
+        )
 
-        print(f"Able to restore {len(encrypted_filepath_to_backup_filepath.keys())} files out of a total of {len(encrypted_drive_dataset['readme']['filepaths'])} encrypted files")
+        print(f"Able to restore {len(encrypted_filepath_to_backup_filepath.keys())} files out of a total of {len(encrypted_drive_dataset['litter']['filepaths'])} encrypted files")
         print(f"Able to remove {encrypted_drive_dataset['litter']['count']} litter files")
 
 
@@ -112,9 +115,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--root_encrypted_dir", required=True, help="The root directory that was encrypted.")
     parser.add_argument("--root_backup_dir", required=True, help="The root backup directory.")
-    parser.add_argument("--dry_run", default=True, help="The root backup directory.")
     
     args = parser.parse_args()
+    print(args)
 
-    wanna_cry_restorer = WannaCryRestorer()
+    wanna_cry_restorer = WannaCryRestorer(args)
     wanna_cry_restorer.restore()
