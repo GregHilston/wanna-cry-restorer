@@ -23,7 +23,7 @@ class WannaCryRestorer:
 
         # if prior run's results were found
         if False and os.path.exists("encrypted_drive_dataset.json"):
-            print("Prior run's 'encrypted_drive_dataset.json' is found. Using that instead of recreating it")
+            print("prior run's 'encrypted_drive_dataset.json' is found. Using that instead of recreating it")
             with open("encrypted_drive_dataset.json") as json_file: 
                 encrypted_drive_dataset = json.load(json_file)
                 return encrypted_drive_dataset
@@ -68,7 +68,7 @@ class WannaCryRestorer:
         return encrypted_drive_dataset
 
     def replace_encrypted_with_backup(self, root_backup_dir: str, encrypted_drive_dataset: dict):
-        print("Begin searching backup for files to use as replacements")
+        print("begin searching backup for files to use as replacements")
 
         # maps encrypted filepaths to backup filepaths that can be used to restore
         encrypted_filepath_to_backup_filepath = {}
@@ -107,8 +107,8 @@ class WannaCryRestorer:
             encrypted_drive_dataset
         )
 
-        print(f"Able to restore {len(encrypted_filepath_to_backup_filepath.keys())} files out of a total of {len(encrypted_drive_dataset['litter']['filepaths'])} encrypted files")
-        print(f"Able to remove {encrypted_drive_dataset['litter']['count']} litter files")
+        print(f"able to restore {len(encrypted_filepath_to_backup_filepath.keys())} files out of a total of {len(encrypted_drive_dataset['encrypted']['filepaths'])} encrypted files")
+        print(f"able to remove {encrypted_drive_dataset['litter']['count']} litter files")
 
 
 if __name__ == "__main__":
@@ -117,7 +117,6 @@ if __name__ == "__main__":
     parser.add_argument("--root_backup_dir", required=True, help="The root backup directory.")
     
     args = parser.parse_args()
-    print(args)
 
     wanna_cry_restorer = WannaCryRestorer(args)
     wanna_cry_restorer.restore()
