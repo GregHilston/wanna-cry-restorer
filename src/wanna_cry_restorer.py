@@ -95,7 +95,39 @@ class WannaCryRestorer:
 
         return encrypted_filepath_to_backup_filepath
     
-    def restore(self):
+    def remove_litter(self, litter_filepaths: list, dry_run=True):
+        """Removes all files in litter_filepaths"""
+
+        if dry_run:
+            print(f"would remove {len(litter_filepaths)} litter filepaths")
+        else:
+            print(f"going to remove {len(litter_filepaths)} litter filepaths")
+
+
+        for litter_filepath in litter_filepaths:
+            if dry_run:
+                print(f"\twould remove litter filepath at {litter_filepath}")
+            else:
+                # rm file
+                pass
+
+    def restore_encrypted_files_with_backups(self, encrypted_filepath_to_backup_filepath: dict, dry_run=True):
+        """Restores all encrypted filepaths with backup filepaths"""
+
+        if dry_run:
+            print(f"would restore {len(encrypted_filepath_to_backup_filepath.keys())} encrypted filepaths with backup filepaths")
+        else:
+            print(f"going to restore {len(encrypted_filepath_to_backup_filepath.keys())} encrypted filepaths with backup filepaths")
+
+
+        for key, value in encrypted_filepath_to_backup_filepath.items():
+            if dry_run:
+                print(f"\twould restore encrypted filepath at {key} with backup filepath at {value}")
+            else:
+                # cp file
+                pass
+
+    def run(self):
         # traverse encrypted drive and figure out what litter we can remove and
         # what files are encrypted
         encrypted_drive_dataset = self.build_dataset_from_encrypted_drive(self.args.root_encrypted_dir) 
@@ -110,6 +142,11 @@ class WannaCryRestorer:
         print(f"able to restore {len(encrypted_filepath_to_backup_filepath.keys())} files out of a total of {len(encrypted_drive_dataset['encrypted']['filepaths'])} encrypted files")
         print(f"able to remove {encrypted_drive_dataset['litter']['count']} litter files")
 
+        # perform the cleaning of litter
+        self.remove_litter(encrypted_drive_dataset["litter"]["filepaths"], dry_run=True)
+
+        # perform the restoring of encrypted filepaths with backup filepaths
+        self.restore_encrypted_files_with_backups(encrypted_filepath_to_backup_filepath, dry_run=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -119,4 +156,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     wanna_cry_restorer = WannaCryRestorer(args)
-    wanna_cry_restorer.restore()
+    wanna_cry_restorer.run()
