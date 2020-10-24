@@ -12,7 +12,7 @@ class WannaCryRestorer:
     def __init__(self, args):
         self.args = args
 
-    def build_dataset_from_encrypted_drive(self, root_encrypted_dir: str):
+    def build_dataset_from_encrypted_drive(self, root_encrypted_dir: str, use_past_run_dataset = False):
         """Traverses the root_encrypted_dir and builds up a data structure of
         filepaths that are encrypted and filespaths of litter files.
 
@@ -22,7 +22,7 @@ class WannaCryRestorer:
         litter_file_left_behind_by_wanna_cry = "README_FOR_DECRYPT.txt"
 
         # if prior run's results were found
-        if False and os.path.exists("encrypted_drive_dataset.json"):
+        if use_past_run_dataset and os.path.exists("encrypted_drive_dataset.json"):
             print("prior run's 'encrypted_drive_dataset.json' is found. Using that instead of recreating it")
             with open("encrypted_drive_dataset.json") as json_file: 
                 encrypted_drive_dataset = json.load(json_file)
@@ -89,7 +89,7 @@ class WannaCryRestorer:
 
         # write our results locally so we don't have to recompute
         with open("encrypted_filepath_to_backup_filepath.json", 'w') as outfile:
-                json.dump("encrypted_filepath_to_backup_filepath", outfile)
+                json.dump(encrypted_filepath_to_backup_filepath, outfile)
         
         print("mapping of encrypted files to backup files built and dumped to encrypted_filepath_to_backup_filepath.json")
 
