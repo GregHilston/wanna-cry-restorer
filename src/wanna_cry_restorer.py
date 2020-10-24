@@ -43,13 +43,17 @@ class WannaCryRestorer:
         encrypted_drive_dataset["litter"]["filepaths"] = []
 
         # recursively traverse every directory in root_encrypted_dir
-        for subdir, dirs, files in os.walk(root_encrypted_dir):
-            for file in files:
+        for root, subdirs, files in os.walk(root_encrypted_dir):
+            # from https://stackoverflow.com/a/2212698/1983957
+            # root: Current path which is "walked through"
+            # subdirs: Files in root of type directory
+            # files: Files in root (not in subdirs) of type other than directory
+            for filename in files:
                 # builds up the full file path
-                filepath = subdir + os.sep + file
+                filepath = os.path.join(root, filename)
 
                 # if litter
-                if file == litter_file_left_behind_by_wanna_cry:
+                if filename == litter_file_left_behind_by_wanna_cry:
                     encrypted_drive_dataset["litter"]["filepaths"].append(filepath)
 
                 # if encrypted
@@ -74,17 +78,24 @@ class WannaCryRestorer:
         encrypted_filepath_to_backup_filepath = {}
 
         # recursively traverse every directory in root_backup_dir
-        for subdir, dirs, backup_files in os.walk(root_backup_dir):
-            for backup_file in backup_files:
+        for root, subdirs, files in os.walk(root_backup_dir):
+            # from https://stackoverflow.com/a/2212698/1983957
+            # root: Current path which is "walked through"
+            # subdirs: Files in root of type directory
+            # files: Files in root (not in subdirs) of type other than directory
+
+            # for every backup file
+            for filename in files:
                 # builds up the full file path
-                backup_filepath = subdir + os.sep + backup_file
+                backup_filepath = os.path.join(root, filename)
                 
+                # for every encrypted file
                 for encrypted_filepath in [entry for entry in encrypted_drive_dataset["encrypted"]["filepaths"] if entry.endswith("encrypt")]:
                     # print(f"encrypted_filepath {encrypted_filepath}")
                     encrypted_file = os.path.basename(encrypted_filepath)
                     # print(f"encrypted_file {encrypted_file}")
-                    if backup_file + ".encrypt" == encrypted_file:
-                        print(f'\tCan replace encrypted "{encrypted_filepath}" with "{backup_filepath}"')
+                    if filename + ".encrypt" == encrypted_file:
+                        print(f'\tcan replace encrypted "{encrypted_filepath}" with "{backup_filepath}"')
                         encrypted_filepath_to_backup_filepath[encrypted_filepath] = backup_filepath
 
         # write our results locally so we don't have to recompute
