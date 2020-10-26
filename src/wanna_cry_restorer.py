@@ -122,6 +122,7 @@ class WannaCryRestorer:
                 print(f"\twould remove litter filepath at {litter_filepath}")
             else:
                 os.remove(litter_filepath)
+                print(f"\tremoved litter filepath at {litter_filepath}")
 
     def restore_encrypted_files_with_backups(self, encrypted_filepath_to_backup_filepath: dict, dry_run=True):
         """Restores all encrypted filepaths with backup filepaths"""
@@ -137,6 +138,7 @@ class WannaCryRestorer:
                 print(f"\twould restore encrypted filepath at {key} with backup filepath at {value}")
             else:
                 copyfile(value, key)
+                print(f"\trestored encrypted filepath at {key} with backup filepath at {value}")
 
     def run(self):
         # traverse encrypted drive and figure out what litter we can remove and
