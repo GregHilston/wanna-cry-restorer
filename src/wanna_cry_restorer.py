@@ -7,7 +7,6 @@ import argparse
 import json 
 import os
 
-from pathlib import Path
 from shutil import copyfile
 
 
@@ -95,14 +94,13 @@ class WannaCryRestorer:
             for filename in files:
                 # builds up the full file path
                 backup_filepath = os.path.join(root, filename)
-                grandfather_dir_filepath = Path(backup_filepath).parent.parent
 
                 # for every encrypted file
                 for encrypted_filepath in [entry for entry in encrypted_drive_dataset["encrypted"]["filepaths"] if entry.endswith("encrypt")]:
                     # print(f"encrypted_filepath {encrypted_filepath}")
                     encrypted_file = os.path.basename(encrypted_filepath)
                     # print(f"encrypted_file {encrypted_file}")
-                    if filename + ".encrypt" == encrypted_file:
+                    if filename + ".encrypt" == encrypted_file and os.path.basename(os.path.dirname(backup_filepath)) == os.path.basename(os.path.dirname(encrypted_filepath)):
                         print(f'\tcan replace encrypted "{encrypted_filepath}" with "{backup_filepath}"')
                         encrypted_filepath_to_backup_filepath[encrypted_filepath] = backup_filepath
 
