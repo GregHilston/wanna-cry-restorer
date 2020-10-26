@@ -7,6 +7,7 @@ import argparse
 import json 
 import os
 
+from pathlib import Path
 from shutil import copyfile
 
 
@@ -86,11 +87,16 @@ class WannaCryRestorer:
             # subdirs: Files in root of type directory
             # files: Files in root (not in subdirs) of type other than directory
 
+            # the following code ensures that two filenames that match have the same
+            # directory and directory above that matching
+            # it is not performant. This ensures that each file we replace with a backup file
+            # is the same file instead of clobbering based on same filenames
             # for every backup file
             for filename in files:
                 # builds up the full file path
                 backup_filepath = os.path.join(root, filename)
-                
+                grandfather_dir_filepath = Path(backup_filepath).parent.parent
+
                 # for every encrypted file
                 for encrypted_filepath in [entry for entry in encrypted_drive_dataset["encrypted"]["filepaths"] if entry.endswith("encrypt")]:
                     # print(f"encrypted_filepath {encrypted_filepath}")
