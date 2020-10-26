@@ -15,6 +15,7 @@ manual_test: ## Tests script using a sample infected directory and a sample back
 	python3 ~/Git/wanna-cry-restorer/src/wanna_cry_restorer.py \
 		--root_encrypted_dir ~/Git/wanna-cry-restorer/fake_data/fake_root_encrypted_dir \
 		--root_backup_dir ~/Git/wanna-cry-restorer/fake_data/fake_root_backup_dir \
+		--dry_run
 
 test: ## Runs unit tests
 	python3 -m pytest

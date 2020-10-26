@@ -3,10 +3,12 @@
 # EX: replace "/run/user/1000/gvfs/smb-share:server=10.0.0.213,share=music/New Age/Steve Roach/Spiral Revelation/cover.jpg.encrypt" ONLY with a `cover.jpg` in a folder called Spiral Revelation
 
 
-import os
-import json 
-
 import argparse
+import json 
+import os
+
+from shutil import copyfile
+
 
 class WannaCryRestorer:
     def __init__(self, args):
@@ -119,8 +121,7 @@ class WannaCryRestorer:
             if dry_run:
                 print(f"\twould remove litter filepath at {litter_filepath}")
             else:
-                # rm file
-                pass
+                os.remove(litter_filepath)
 
     def restore_encrypted_files_with_backups(self, encrypted_filepath_to_backup_filepath: dict, dry_run=True):
         """Restores all encrypted filepaths with backup filepaths"""
@@ -135,8 +136,7 @@ class WannaCryRestorer:
             if dry_run:
                 print(f"\twould restore encrypted filepath at {key} with backup filepath at {value}")
             else:
-                # cp file
-                pass
+                copyfile(value, key)
 
     def run(self):
         # traverse encrypted drive and figure out what litter we can remove and
@@ -154,15 +154,16 @@ class WannaCryRestorer:
         print(f"able to remove {encrypted_drive_dataset['litter']['count']} litter files")
 
         # perform the cleaning of litter
-        self.remove_litter(encrypted_drive_dataset["litter"]["filepaths"], dry_run=True)
+        self.remove_litter(encrypted_drive_dataset["litter"]["filepaths"], dry_run=self.args.dry_run)
 
         # perform the restoring of encrypted filepaths with backup filepaths
-        self.restore_encrypted_files_with_backups(encrypted_filepath_to_backup_filepath, dry_run=True)
+        self.restore_encrypted_files_with_backups(encrypted_filepath_to_backup_filepath, dry_run=self.args.dry_run)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--root_encrypted_dir", required=True, help="The root directory that was encrypted.")
     parser.add_argument("--root_backup_dir", required=True, help="The root backup directory.")
+    parser.add_argument("--dry_run", action="store_true", help="Whether to just print out what we'd do and not actually do it or not.")
     
     args = parser.parse_args()
 
