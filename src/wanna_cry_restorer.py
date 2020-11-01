@@ -69,7 +69,7 @@ class WannaCryRestorer:
         # write our results locally so we don't have to recompute
         with open("encrypted_drive_dataset.json", 'w') as outfile:
             json.dump(encrypted_drive_dataset, outfile)
-    
+
         print("encrypted drive dataset built and dumped to encrypted_drive_dataset.json")
         return encrypted_drive_dataset
 
@@ -97,10 +97,28 @@ class WannaCryRestorer:
 
                 # for every encrypted file
                 for encrypted_filepath in [entry for entry in encrypted_drive_dataset["encrypted"]["filepaths"] if entry.endswith("encrypt")]:
-                    # print(f"encrypted_filepath {encrypted_filepath}")
                     encrypted_file = os.path.basename(encrypted_filepath)
-                    # print(f"encrypted_file {encrypted_file}")
-                    if filename + ".encrypt" == encrypted_file and os.path.basename(os.path.dirname(backup_filepath)) == os.path.basename(os.path.dirname(encrypted_filepath)):
+
+                    backup_filepath_directory = os.path.basename(os.path.dirname(backup_filepath))
+                    backup_filepath_parent_directory = os.path.basename(os.path.abspath(os.path.join(os.path.dirname(backup_filepath), "..")))
+                    encrypted_filepath_directory = os.path.basename(os.path.dirname(encrypted_filepath))
+                    encrypted_filepath_parent_directory = os.path.basename(os.path.abspath(os.path.join(os.path.dirname(encrypted_filepath), "..")))
+                    
+                    do_directories_match = backup_filepath_directory == encrypted_filepath_directory
+                    do_parent_directories_match = backup_filepath_parent_directory == encrypted_filepath_parent_directory
+
+                    if filename + ".encrypt" == encrypted_file and do_directories_match and do_parent_directories_match:
+                        # print(f"\tencrypted_filepath {encrypted_filepath}")
+                        # print(f"\tbackup_filepath {backup_filepath}")
+
+                        # print(f"\tencrypted_file {encrypted_file}")
+                        # print(f"\tbackup_file {filename}")
+
+                        # print(f"\tbackup_filepath_directory {backup_filepath_directory}")
+                        # print(f"\tbackup_filepath_parent_directory {backup_filepath_parent_directory}")
+                        # print(f"\tencrypted_filepath_directory {encrypted_filepath_directory}")
+                        # print(f"\tencrypted_filepath_parent_directory {encrypted_filepath_parent_directory}")
+
                         print(f'\tcan replace encrypted "{encrypted_filepath}" with "{backup_filepath}"')
                         encrypted_filepath_to_backup_filepath[encrypted_filepath] = backup_filepath
 
