@@ -6,6 +6,9 @@ SHELL := /bin/bash
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+mount_samba: ## Mounts the music share from the NAS over SMB to our local mount point
+	sudo mount -t cifs -o ghilston //10.0.0.213/music /mnt/dad_nas_musiclibrary
+
 old_manual_test: ## Tests script using a sample infected directory and a sample backup dir.
 	python3 ~/Git/wanna-cry-restorer/wanna_cry_restorer.py \
 		--root_encrypted_dir ~/Git/wanna-cry-restorer/test-infected \
@@ -21,6 +24,7 @@ test: ## Runs unit tests
 	python3 -m pytest
 
 real: ## Real script using real infected directory and real backup dir.
-	python3 ~/Git/wanna-cry-restorer/wanna_cry_restorer.py \
-		--root_encrypted_dir /run/user/1000/gvfs/smb-share:server=10.0.0.213,share=music \
-		--root_backup_dir "/media/ghilston/My Passport"
+	python3 ~/Git/wanna-cry-restorer/src/wanna_cry_restorer.py \
+		--root_encrypted_dir /mnt/dad_nas_musiclibrary \
+		--root_backup_dir "/mnt/dad_nas_backup" \
+	        --dry_run
