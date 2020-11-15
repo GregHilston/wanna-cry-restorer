@@ -6,6 +6,9 @@ SHELL := /bin/bash
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+mount_backup: ## Mounts the backup external drive we plug in via USB
+	sudo mount /dev/sdb1 /media/external-usb
+
 mount_samba: ## Mounts the music share from the NAS over SMB to our local mount point
 	sudo mount -t cifs -o ghilston //10.0.0.213/music /mnt/dad_nas_musiclibrary
 
