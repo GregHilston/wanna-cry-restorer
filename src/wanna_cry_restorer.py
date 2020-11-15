@@ -14,7 +14,7 @@ class WannaCryRestorer:
     def __init__(self, args):
         self.args = args
 
-    def build_dataset_from_encrypted_drive(self, root_encrypted_dir: str, use_past_run_dataset = False):
+    def build_dataset_from_encrypted_drive(self, root_encrypted_dir: str, use_past_run_dataset = True):
         """Traverses the root_encrypted_dir and builds up a data structure of
         filepaths that are encrypted and filespaths of litter files.
 
@@ -143,7 +143,7 @@ class WannaCryRestorer:
             if dry_run:
                 print(f"\twould remove litter filepath at {litter_filepath}")
             else:
-                # os.remove(litter_filepath)
+                os.remove(litter_filepath)
                 print(f"\tremoved litter filepath at {litter_filepath}")
 
     def restore_encrypted_files_with_backups(self, encrypted_filepath_to_backup_filepath: dict, dry_run=True):
@@ -159,7 +159,7 @@ class WannaCryRestorer:
             if dry_run:
                 print(f"\twould restore encrypted filepath at {key} with backup filepath at {value}")
             else:
-                # copyfile(value, key)
+                copyfile(value, key)
                 print(f"\trestored encrypted filepath at {key} with backup filepath at {value}")
 
     def run(self):
