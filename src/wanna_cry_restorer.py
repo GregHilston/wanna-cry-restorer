@@ -73,8 +73,15 @@ class WannaCryRestorer:
         print("encrypted drive dataset built and dumped to encrypted_drive_dataset.json")
         return encrypted_drive_dataset
 
-    def replace_encrypted_with_backup(self, root_backup_dir: str, encrypted_drive_dataset: dict):
+    def replace_encrypted_with_backup(self, root_backup_dir: str, encrypted_drive_dataset: dict, use_past_run_dataset = True):
         print("begin searching backup for files to use as replacements")
+
+        # if prior run's results were found
+        if use_past_run_dataset and os.path.exists("encrypted_filepath_to_backup_filepath.json"):
+            print("prior run's 'encrypted_filepath_to_backup_filepath.json' is found. Using that instead of recreating it")
+            with open("encrypted_filepath_to_backup_filepath.json") as json_file: 
+                encrypted_filepath_to_backup_dataset = json.load(json_file)
+                return encrypted_filepath_to_backup_dataset
 
         # maps encrypted filepaths to backup filepaths that can be used to restore
         encrypted_filepath_to_backup_filepath = {}
@@ -143,7 +150,10 @@ class WannaCryRestorer:
             if dry_run:
                 print(f"\twould remove litter filepath at {litter_filepath}")
             else:
-                os.remove(litter_filepath)
+                try:
+                    os.remove(litter_filepath)
+                except:
+                    print(f"failed to remove '{litter_filepath}'. It could have already been removed from a previous run, no longer exist or we lack permissions...")
                 print(f"\tremoved litter filepath at {litter_filepath}")
 
     def restore_encrypted_files_with_backups(self, encrypted_filepath_to_backup_filepath: dict, dry_run=True):
@@ -161,7 +171,14 @@ class WannaCryRestorer:
             else:
                 copyfile(value, key)
                 print(f"\trestored encrypted filepath at {key} with backup filepath at {value}")
-
+                
+                # renaming encrypted file to no longer have the .encrypt suffix
+                #try:
+                #    encrypted_file_name_without_encrypt_suffix = key[:-len(".encrypt")]
+                #    os.rename(key, encrypted_file_name_without_encrypt_suffix)
+                #    print(f"\trenamed encrypted file at {key} to {encrypted_file_name_without_encrypt_suffix}")
+                #except:
+                #    print(f"\twas unable to renam encrypted file at {key} to {encrypted_file_name_without_encrypt_suffix}")
     def run(self):
         # traverse encrypted drive and figure out what litter we can remove and
         # what files are encrypted
@@ -178,9 +195,10 @@ class WannaCryRestorer:
         print(f"able to remove {encrypted_drive_dataset['litter']['count']} litter files")
 
         # perform the cleaning of litter
-        self.remove_litter(encrypted_drive_dataset["litter"]["filepaths"], dry_run=self.args.dry_run)
+        # self.remove_litter(encrypted_drive_dataset["litter"]["filepaths"], dry_run=self.args.dry_run)
 
         # perform the restoring of encrypted filepaths with backup filepaths
+        print(encrypted_filepath_to_backup_filepath)
         self.restore_encrypted_files_with_backups(encrypted_filepath_to_backup_filepath, dry_run=self.args.dry_run)
 
 if __name__ == "__main__":

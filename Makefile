@@ -29,8 +29,8 @@ test: ## Runs unit tests
 real: ## Real script using real infected directory and real backup dir.
 	python3 ~/Git/wanna-cry-restorer/src/wanna_cry_restorer.py \
 		--root_encrypted_dir /mnt/dad_nas_musiclibrary \
-		--root_backup_dir "/mnt/dad_nas_backup" \
-	        --dry_run
+		--root_backup_dir "/media/external-usb" #\
+	        # --dry_run
 
 find_encrypted_files_without_backup: ## Finds encrypted files without backup. Run after running for real but as a dryrun.
 	python3 find_encrypted_files_with_no_backup.py
