@@ -16,3 +16,8 @@ Running this script produces two output files that one can look over manually to
 Then we had to rename the encrypted files to remove the `.encrypt`. I did this with a quick modification of the script.
 
 We only ran this against the Music Library folder and not something like the Audio folder.
+
+Some notes that will be helpful after not running for a long time
+
+- To see the unmounted disk `$ lsblk`
+- Mount the disk `$ sudo mount /dev/sdb1 /mnt/dad_nas_backup/`

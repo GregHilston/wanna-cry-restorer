@@ -169,8 +169,8 @@ class WannaCryRestorer:
             if dry_run:
                 print(f"\twould restore encrypted filepath at {key} with backup filepath at {value}")
             else:
+                print(f"\tgoing to restore encrypted filepath at {key} with backup filepath at {value}")
                 copyfile(value, key)
-                print(f"\trestored encrypted filepath at {key} with backup filepath at {value}")
                 
                 # renaming encrypted file to no longer have the .encrypt suffix
                 #try:
